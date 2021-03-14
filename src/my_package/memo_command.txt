@@ -1,0 +1,168 @@
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+作成日：不明
+ROS　各種コマンドのメモ。
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+＝＝＝＝＝　rosnode 使い方　＝＝＝＝＝
+・Understangin ROS nodes
+http://wiki.ros.org/ROS/Tutorials/UnderstandingNodes
+
+
+
+rosnode list        //立ち上がっているノード一覧を表示
+
+rosnode ping [node_name]     //ノードが生きてるかを確認
+
+
+＝＝＝＝＝　rosrun 使い方 ＝＝＝＝＝
+・Understangin ROS nodes
+http://wiki.ros.org/ROS/Tutorials/UnderstandingNodes
+
+//ノードに名前をつけて立ち上げる
+rosrun [package_name] [node_name] __name:=[original_node_name]      
+
+rosrun rqt_graph rqt_graph      //ちなみに　rosrun rqt_plot rqt_plot もある
+
+
+
+
+＝＝＝＝＝　roslaunch　＝＝＝＝＝
+・Using rqt_console and roslaunch 
+http://wiki.ros.org/ROS/Tutorials/UsingRqtconsoleRoslaunch
+
+roslaunch [package] [filename.launch]
+
+/launch/ ディレクトリを パッケージ内に作り(src,msg,srvなどと同列)、そのディレクトリの中にlaunchファイルを格納する。
+
+
+
+
+＝＝＝＝＝＝＝＝＝　rostopic 使い方　＝＝＝＝＝＝＝＝＝
+・Understanding ROS Topics
+http://wiki.ros.org/ROS/Tutorials/UnderstandingTopics
+
+
+rostopic -h     //ヘルプ表示
+
+rostopic echo [topic_name]      //topic の中身（データとか）を表示する
+rostopic list [topic_name]              //subscribe か publish されている全topicを表示
+rostopic type [topic_name]       //publish されているtopicのメッセージ型を返す
+
+rostopic hz [topic]     //topicを発行するrate(周期？？) を報告してくれる
+
+rostopic pub [topic] [msg_type] [args]      //publish data on to a topic currently advertised
+
+    ex.1) 
+    rostopic pub -1 /turtle/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'
+        -1 option : 1回だけtopic pub する意味
+        /turtle/cmd_vel : トピック名
+        geometry_msgs/Twist : メッセージタイプ
+        -- : 以降はオプションで無いことを示す記号(マイナスがつく値を用いるときなどに必要となる)
+        '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]' : Twist msgで定義されている２本ベクトルの値。（並進と回転）
+        
+
+    ex.2)
+    rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, -1.8]'
+
+
+
+
+＝＝＝＝＝　ROS message　＝＝＝＝＝
+・Creating ROS msg and srv 
+http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv
+
+※msgファイルは型定義だけがひたすら書かかれているファイル。
+※Header はROS内部で使われる基本的なメッセージ型。たいてい一行目で定義されている。
+
+※新しくmsgファイルを作成した場合はpackage.xmlの<build_depend>タグ内と<exec_depend>タグ内に
+　　それぞれmessage_generationとmessage_runtimeを追記する必要がある。
+※message_generationはビルド時にのみ必要となり、message_runtimeはruntime時にのみ必要となる。
+※message_generationはCMakeLists.txt内のfind_package(catkin REQUIRED COMPONENTS ・・・)にも追記する必要あり。
+　　たまに追記しなくてもビルドが通ることがあるが、その場合は簡単に破綻する。
+※message_runtimeはCMakeLists.txt内のcatkin_package(CATKIN_DEPENDS ・・・)にも追記する必要がある。
+※作成したmsgファイル名はCMakeLists.txt内のadd_message_files(FILES ・・・)に箇条書きで追記する必要がある。
+　　（デフォルトではコメントアウトされているので＃を消して有効化する）
+
+※CMakeLists.txt内のgenerate_messages(DEPENDENCIES ・・・)がコメントアウトされているので有効化する必要がある。
+  これはmsg,srvファイルの作成で共通して必要
+
+rosmsg show [message type]  
+    //[message type]の指定にはパッケージ名を含めるてmsgの名前を入力する場合と、
+    　　　パッケージ名を含めない場合とで出力結果が変化する。
+
+rosmsg list
+rosmsg md5
+rosmsg package 
+rosmsg packages
+
+
+
+
+
+
+＝＝＝＝＝＝＝＝＝　ROS service　＝＝＝＝＝＝＝＝＝
+・Understanding ROS services and Parameters
+http://wiki.ros.org/ROS/Tutorials/UnderstandingServicesParams
+
+・Creating a ROS meg and srv
+http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv
+
+
+rosservice list                     //print information about active services
+rosservice type [service_name]        //print service type
+    ex). //spawnというサービスのタイプを調べて中身を見る
+    $rosservice type /spawn      //結果　turtlesim/Spawn
+    $rossrv show turtlesim/Spawn  //結果　request(float32が3つ、string), response(string一つ)が表示された
+
+
+rosservice call [service_name] [args]                //call the service with the provided args
+
+rosservice find                 //find services by service type
+rosservice uri                  //print service ROSRPC uri
+
+rossrv show [service_type]      //サービスファイルの中身が見れる
+
+
+
+※srvはmsgと同様に変数の型が書かれているファイル
+※request,response の区切りは "---" で区切られている。
+※serviceファイルの作成時にもmessageファイルの作成と同様のmessage_generation(ビルド時用)と
+　　message_runtime(実行時用)の追加が必要。package.xmlにも同様に<build_depend>,<exec_depend>タグ内に追記する必要がある。
+※作成したsrvファイル名はCMakeLists.txt内のadd_service_files(FILES ・・・)に箇条書きで追記する必要がある。
+　　（デフォルトではコメントアウトされているので＃を消して有効化する）これはmsg,srvファイルの作成で共通して必要
+
+
+
+
+＝＝＝＝＝＝＝＝＝　ROSパラメータ　＝＝＝＝＝＝＝＝＝
+・Understanding ROS services and Parameters
+http://wiki.ros.org/ROS/Tutorials/UnderstandingServicesParams
+
+・Parameter server 
+http://wiki.ros.org/Parameter%20Server
+
+
+※パラメータサーバは掲示板みたいなもの　by小島さん
+※パラメータはすべてパッケージ中のparams.yamlにかかれている　by Tutorials（たぶん）
+
+・rosparam でパラメータサーバ内のパラメータをいじる
+rosparam set [param_name]
+rosparam get [param_name]
+    ex). //パラメータサーバ全体を表示するコマンド
+    param get /
+
+rosparam delete 
+rosparam list 
+
+・params.yamlの操作（？）
+rosparam load 
+rosparam dump 
+
+
+
+
+
+
+
+
+

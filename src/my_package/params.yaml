@@ -1,0 +1,10 @@
+rosdistro: 'melodic
+
+  '
+roslaunch:
+  uris: {host_hanzitong_endeavor_na512e__45295: 'http://hanzitong-Endeavor-NA512E:45295/'}
+rosversion: '1.14.5
+
+  '
+run_id: 5685c5e2-7cda-11eb-90c2-c82158182be9
+turtlesim: {background_b: 255, background_g: 86, background_r: 150, backgroung_r: 150}

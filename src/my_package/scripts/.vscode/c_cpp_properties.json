@@ -1,0 +1,37 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/hanzitong/ros_practice/devel/include/**",
+        "/home/hanzitong/ros_anafi/devel/include/**",
+        "/opt/ros/melodic/include/**",
+        "/home/hanzitong/ros_mavic/src/cv_camera/include/**",
+        "/home/hanzitong/dynamixel_practice/src/DynamixelSDK/ros/include/**",
+        "/home/hanzitong/dynamixel_practice/src/dynamixel-workbench/dynamixel_workbench_controllers/include/**",
+        "/home/hanzitong/dynamixel_practice/src/dynamixel-workbench/dynamixel_workbench_operators/include/**",
+        "/home/hanzitong/dynamixel_practice/src/dynamixel-workbench/dynamixel_workbench_toolbox/include/**",
+        "/home/hanzitong/dynamixel_practice/src/ros_controllers_extensions/empty_controller/include/**",
+        "/home/hanzitong/ros_anafi/src/gscam/include/**",
+        "/home/hanzitong/dynamixel_practice/src/ros_control_extensions/hardware_interface_extensions/include/**",
+        "/home/hanzitong/dynamixel_practice/src/ros_control_extensions/joint_limits_interface_extensions/include/**",
+        "/home/hanzitong/dynamixel_practice/src/layered_hardware/include/**",
+        "/home/hanzitong/dynamixel_practice/src/layered_hardware_dynamixel/include/**",
+        "/home/hanzitong/dynamixel_practice/src/layered_hardware_extensions/include/**",
+        "/home/hanzitong/ros_practice/src/my_package/include/**",
+        "/home/hanzitong/dynamixel_practice/src/ros_controllers_extensions/posvel_controllers/include/**",
+        "/home/hanzitong/dynamixel_practice/src/ros_controllers_extensions/posveleff_controllers/include/**",
+        "/home/hanzitong/dynamixel_practice/src/ros_control_extensions/transmission_interface_extensions/include/**",
+        "/home/hanzitong/ros_mavic/src/usb_cam/include/**",
+        "/home/hanzitong/ros_mavic/src/usb_cam_hardware/usb_cam_controllers/include/**",
+        "/home/hanzitong/ros_mavic/src/usb_cam_hardware/usb_cam_hardware/include/**",
+        "/home/hanzitong/ros_mavic/src/usb_cam_hardware/usb_cam_hardware_interface/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ]
+}

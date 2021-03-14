@@ -1,0 +1,83 @@
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+作成日：不明
+pythonを使ったPublisher/Subscriberの書き方
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+・Writing a simple Publisher and subscriber (Python)
+http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28python%29
+
+
+※↓↓これをCMakeLists.txtに追記しないと行けない。
+　　これはpythonが適切にインストールされ、適切なインタープリターが使われることを保証する。
+catkin_install_python(PROGRAMS scripts/talker.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
+
+＝＝＝＝＝　Publisher の書き方　＝＝＝＝＝
+
+import rospy                            //ROSでpythonを使うのに必要
+from std_msgs.msg import String         //メッセージ型
+
+def talker():
+    pub = rospy.Publisher('chatter', String, queue_size=10)     //発行するトピック名"chatter",トピック型"String(クラス)",サイズの設定（通信がうまく行かなかったら小さくする）
+    rospy.init_node('talker', anonymous=True)      //ノード名"talker"をrospyに教える行。rospyはノード名を教えられなければROS masterをの通信を開始しない。
+    rate = rospy.Rate(10) # 10hz               //rateはRateのオブジェクト。Rate.sleep()メソッドを用いると指定された周波数でトピックを垂れ流す。
+    
+    while not rospy.is_shutdown():          //以下のループはめっちゃ標準のノードの機能の書き方。
+        hello_str = "hello world %s" % rospy.get_time()
+        rospy.loginfo(hello_str)            //rospy.loginfo()はスクリーンへメッセージの出力、ノードのログファイルに出力、rogoutに出力する。の３つの役割。デバッグ用。rqt_consoleでログを引き抜く。
+        pub.publish(hello_str)              //pubはPublisherクラスのオブジェクト。Publisher.publish()でトピックを発行する。
+        rate.sleep()                //Rateクラスのrateオブジェクトのsleep()メソッドが呼ばれるときにrateオブジェクトの宣言時に指定された周波数になるよう実行がストップする。
+
+if __name__ == '__main__':
+    try:
+        talker()
+    except rospy.ROSInterruptException:     //ctl + Cとか押したときに rospy.sleep() か rospy.Rate.sleep() によって投げられる。
+        pass
+
+
+
+
+
+＝＝＝＝＝ Subscriber の書き方　＝＝＝＝＝
+
+#!/usr/bin/env python 
+import rospy
+from std_msgs.msg import String 
+
+def callback(date):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
+
+def listener():
+    rospy.init_node('listener', anonymous = True)   # anonymous=True により複数ノードの立ち上げを許可する。通常だと同名のノードが立ち上がった瞬間に前ノードは即座に消去される。
+    rospy.Subscriber("chatter", String, callback)   # String型のchatterトピックを受信するとすぐにcallback関数が発動する。
+    rospy.spin()                # プログラムが中断されるまでpythonを存続させている。roscppとは違ってsubscriberのcallback関数には影響しないらしい
+
+if __name__ == '__main__':
+    listener()
+
+
+※scriptを書いた後はCMakeLists.txtに↓↓を追記する必要がある。
+
+    catkin_install_python(PROGRAMS scripts/talker.py scripts/listener.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    )
+
+
+※ message,,service のためにpythonであってもcatkin_makeする必要がある。
+
+
+
+
+
+
+
+
+
+
+
+
+
+

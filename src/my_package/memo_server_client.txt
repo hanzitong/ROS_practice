@@ -1,0 +1,88 @@
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+作成日：不明
+pythonを使った server/client の書き方
+＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+・Writing a simple Service and client (Python)
+http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28python%29
+
+
+＝＝＝＝＝　Server の書き方　＝＝＝＝＝
+
+#!/usr/bin/env python 
+
+from __future__ import print_function
+
+from beginner_tutorials.srv import AddTwoInts,AddTwoIntsResponse
+import rospy
+
+def handle_add_two_ints(req):       //この関数はAddTwoIntsRequestインスタンスによって呼ばれ、AddTwoIntsResponseインスタンスを返す。
+    print("Returning [%s + %s = %s]"%(req.a, req.b, (req.a + req.b)))
+    return AddTwoIntsResponse(req.a + req.b)
+
+
+def add_two_ints_server():
+    rospy.init_node('add_two_ints_server')
+    s = rospy.Service('add_two_ints', AddTwoInts, handle_add_two_ints)  //rospyを使ってserver（サビースを提供するノード）を定義している。
+                                                                                サービス名がadd_two_intsで、メッセージ型がadd_two_ints、
+                                                                                リクエストを受けた後はhandle_add_two_ints関数が呼ばれる。
+    print(Ready to add two ints.")
+    rospy.spin()        //サービズノードが終了（中断）するまで待機させる役割を持つ
+
+
+if __name__ == "__main__"
+    add_two_ints_server()
+
+※作成したソースコードに実行権限を与えることを忘れずに！
+chmod +x scripts/add_two_ints_server.py
+
+※以下をCMakeLists.txtに追記する必要がある。
+    catkin_install_python(PROGRAMS scripts/add_two_ints_server.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    )
+
+
+
+
+＝＝＝＝＝　Client の書き方　＝＝＝＝＝
+
+
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+import sys
+import rospy 
+from beginner_tutorials.srv impost *
+
+def add_two_ints_client(x, y):
+    rospy.wait_for_service('add_two_ints')
+                          //clientを書く場合、rospy.init_node()は使わない。
+                            
+    try:
+        add_two_ints = rospy.Service('add_two_ints')
+        resp1 = add_two_ints(x, y)
+        return resp1.sum
+    except rospy.serviceException as e:
+        print("Service call failed: %s"%e)
+
+def usage():
+    return "%s [x y]"%sys.argv[0]
+
+if __name__ == "__main__" :
+    if len(sys.argv) == 3:
+        x = int(sys.argv[1])
+        y = int(sys.argv[2])
+    else:
+        print(usage())
+        sys.exit(1)
+    print("Requesting "%s + %s"%(x, y))
+    print("%s + %s =%s"%(x, y, add_two_ints_client(x, y)))
+
+
+※ ↓のようにCMakeLists.txtに追記する必要がある。
+catkin_install_python(PROGRAMS scripts/add_two_ints_server.py scripts/add_two_ints_client.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
